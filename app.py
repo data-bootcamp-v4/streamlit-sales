@@ -1,34 +1,37 @@
 # app.py
 
-# Add necessary imports at the beginning of your script
 import streamlit as st
 from backend import load_data, get_summary, plot_sales_over_time
 
 def main():
-    st.title('Supermarket Sales Dashboard - Real-time Hypothesis Testing')
+    st.title('Supermarket Sales Dashboard')
 
-    # Load data and display initial state
+    # Load data 
     data = load_data()
-    summary = get_summary(data)
-    st.write("### Summary Statistics")
-    st.table(summary)
     
-    # Interactive widgets for hypothesis testing
-    st.sidebar.header('Hypothesis Testing Controls')
-    discount_rate = st.sidebar.slider('Discount Rate', min_value=0.0, max_value=1.0, value=0.1, step=0.01)
+    # Interactive widgets
+    st.sidebar.header('Controls')
     min_rating = st.sidebar.slider('Minimum Rating', min_value=0, max_value=10, value=5, step=1)
-
-    # Apply the discount and filter by rating
-    data['Discounted_Total'] = data['Total'] * (1 - discount_rate)
+    
+    # Filter by rating
     filtered_data = data[data['Rating'] >= min_rating]
 
-    # Update summary statistics and plots
+    # Summary statistics
     updated_summary = get_summary(filtered_data)
-    st.write("### Updated Summary Statistics")
+    st.write("### Summary Statistics")
     st.table(updated_summary)
-    
+
+    # Display raw data
+    st.write("### Raw Data")
+    st.dataframe(filtered_data)
+
+    # Plotting
     st.write("### Sales Over Time")
-    plot_sales_over_time(filtered_data)
+    plt = plot_sales_over_time(filtered_data)
+    st.pyplot(plt)
+    
+
 
 if __name__ == '__main__':
     main()
+
